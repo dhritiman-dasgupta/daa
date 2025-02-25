@@ -1,0 +1,141 @@
+/* Q1: Searching Algorithms */
+#include <stdio.h>
+#include <stdlib.h>
+
+int linear_search(int arr[], int n, int key) {
+    for (int i = 0; i < n; i++)
+        if (arr[i] == key)
+            return i;
+    return -1;
+}
+
+int binary_search_iterative(int arr[], int n, int key) {
+    int low = 0, high = n - 1;
+    while (low <= high) {
+        int mid = (low + high) / 2;
+        if (arr[mid] == key) return mid;
+        else if (arr[mid] < key) low = mid + 1;
+        else high = mid - 1;
+    }
+    return -1;
+}
+
+int binary_search_recursive(int arr[], int low, int high, int key) {
+    if (low > high) return -1;
+    int mid = (low + high) / 2;
+    if (arr[mid] == key) return mid;
+    else if (arr[mid] < key) return binary_search_recursive(arr, mid + 1, high, key);
+    else return binary_search_recursive(arr, low, mid - 1, key);
+}
+
+/* Q2: Sorting Algorithms */
+void bubble_sort(int arr[], int n) {
+    for (int i = 0; i < n - 1; i++)
+        for (int j = 0; j < n - i - 1; j++)
+            if (arr[j] > arr[j + 1]) {
+                int temp = arr[j];
+                arr[j] = arr[j + 1];
+                arr[j + 1] = temp;
+            }
+}
+
+void insertion_sort(int arr[], int n) {
+    for (int i = 1; i < n; i++) {
+        int key = arr[i], j = i - 1;
+        while (j >= 0 && arr[j] > key) arr[j + 1] = arr[j--];
+        arr[j + 1] = key;
+    }
+}
+
+/* Q3: Graph Representations */
+#define MAX 100
+int adjMatrix[MAX][MAX], incidenceMatrix[MAX][MAX];
+void adjacency_to_incidence(int n) {
+    // Conversion logic
+}
+
+/* Q4: BFS Traversal */
+void BFS(int graph[MAX][MAX], int start, int n) {
+    int visited[MAX] = {0}, queue[MAX], front = 0, rear = 0;
+    queue[rear++] = start; visited[start] = 1;
+    while (front < rear) {
+        int node = queue[front++];
+        printf("%d ", node);
+        for (int i = 0; i < n; i++)
+            if (graph[node][i] && !visited[i]) {
+                queue[rear++] = i;
+                visited[i] = 1;
+            }
+    }
+}
+
+/* Q5: DFS Traversal */
+void DFS(int graph[MAX][MAX], int node, int visited[], int n) {
+    visited[node] = 1;
+    printf("%d ", node);
+    for (int i = 0; i < n; i++)
+        if (graph[node][i] && !visited[i]) DFS(graph, i, visited, n);
+}
+
+/* Q6: Connected Components */
+int count_components(int graph[MAX][MAX], int n) {
+    int visited[MAX] = {0}, count = 0;
+    for (int i = 0; i < n; i++)
+        if (!visited[i]) { count++; DFS(graph, i, visited, n); }
+    return count;
+}
+
+/* Q7: Bipartite Graph Check */
+int is_bipartite(int graph[MAX][MAX], int n) {
+    int color[MAX];
+    for (int i = 0; i < n; i++) color[i] = -1;
+    color[0] = 1;
+    for (int u = 0; u < n; u++) {
+        for (int v = 0; v < n; v++) {
+            if (graph[u][v] && color[v] == -1)
+                color[v] = 1 - color[u];
+            else if (graph[u][v] && color[v] == color[u])
+                return 0;
+        }
+    }
+    return 1;
+}
+
+/* Q8: Prim's Algorithm */
+void primMST(int graph[MAX][MAX], int n) {
+    int parent[MAX], key[MAX], mstSet[MAX];
+    for (int i = 0; i < n; i++) key[i] = 99999, mstSet[i] = 0;
+    key[0] = 0; parent[0] = -1;
+    for (int count = 0; count < n - 1; count++) {
+        int u, min = 99999;
+        for (int v = 0; v < n; v++)
+            if (!mstSet[v] && key[v] < min)
+                min = key[v], u = v;
+        mstSet[u] = 1;
+        for (int v = 0; v < n; v++)
+            if (graph[u][v] && !mstSet[v] && graph[u][v] < key[v])
+                parent[v] = u, key[v] = graph[u][v];
+    }
+}
+
+/* Q9: Kruskal’s Algorithm */
+void kruskalMST() {
+    // Implement Kruskal's algorithm
+}
+
+/* Q10: Dijkstra’s Algorithm */
+void dijkstra(int graph[MAX][MAX], int src, int n) {
+    int dist[MAX], visited[MAX] = {0};
+    for (int i = 0; i < n; i++) dist[i] = 99999;
+    dist[src] = 0;
+    for (int count = 0; count < n - 1; count++) {
+        int u, min = 99999;
+        for (int v = 0; v < n; v++)
+            if (!visited[v] && dist[v] < min)
+                min = dist[v], u = v;
+        visited[u] = 1;
+        for (int v = 0; v < n; v++)
+            if (!visited[v] && graph[u][v] && dist[u] + graph[u][v] < dist[v])
+                dist[v] = dist[u] + graph[u][v];
+    }
+}
